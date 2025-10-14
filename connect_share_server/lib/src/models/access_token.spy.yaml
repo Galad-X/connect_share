@@ -1,0 +1,24 @@
+class: AccessToken
+table: access_token
+fields:
+  tokenValue: String # The unique, secure random string
+  consumerId: int, relation(parent=serverpod_user_info) # Foreign key to consumer's user ID
+  hotspotId: int, relation(parent= hotspot_config) # Foreign key to the hotspot it's for
+  planId: int, relation(parent= plan) # Foreign key to the plan purchased
+  issueDate: DateTime # When the token was generated (payment confirmed)
+  activationDate: DateTime? # When the token was first used/validated by captive portal
+  expiryDate: DateTime # When the token is no longer valid
+  isActive: bool # Overall status (can be false if expired, revoked, data limit reached)
+  dataUsedBytes: BigInt? # For metered plans (BigInt for large byte counts)
+  lastUsed: DateTime? # Last time this token was validated/used
+  lastUsedDeviceIdentifier: String? # e.g., MAC address or other client fingerprint from captive portal
+indexes:
+  access_token_value_unique_idx:
+    fields: tokenValue
+    unique: true
+  access_token_consumer_id_is_active_idx:
+    fields: consumerId, isActive
+  access_token_hotspot_id_idx:
+    fields: hotspotId
+  access_token_expiry_date_idx:
+    fields: expiryDate

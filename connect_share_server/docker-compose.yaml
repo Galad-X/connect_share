@@ -1,0 +1,44 @@
+services:
+  # Development services
+  postgres:
+    image: postgres:16.3
+    ports:
+      - "8090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: connect_share
+      POSTGRES_PASSWORD: "LL3sa5LRZGv5njthTqkKFpptWJXy11XF"
+    volumes:
+      - connect_share_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6.2.6
+    ports:
+      - "8091:6379"
+    command: redis-server --requirepass "cCDAA6EYECg4WA_Lk155rMOWOCbx_N-R"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+  # Test services
+  postgres_test:
+    image: postgres:16.3
+    ports:
+      - "9090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: connect_share_test
+      POSTGRES_PASSWORD: "0Z9xmVqjolL64cZ4QOvoKX72iZVNN5r8"
+    volumes:
+      - connect_share_test_data:/var/lib/postgresql/data
+
+  redis_test:
+    image: redis:6.2.6
+    ports:
+      - "9091:6379"
+    command: redis-server --requirepass "2ZP7fq_LpHDRr211csYnZBq6xXcJQT2C"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+volumes:
+  connect_share_data:
+  connect_share_test_data:

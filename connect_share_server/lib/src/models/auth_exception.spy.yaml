@@ -1,0 +1,4 @@
+exception: AuthenticationException
+fields:
+  message: String, default="Authentication failed"
+  errorCode: int, default=401

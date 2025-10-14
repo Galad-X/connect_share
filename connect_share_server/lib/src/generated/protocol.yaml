@@ -1,0 +1,46 @@
+admin:
+  - listUsers:
+  - suspendUser:
+  - deleteUser:
+  - getPolicy:
+  - updatePolicy:
+  - listFeedback:
+  - respondToFeedback:
+  - listTransactions:
+  - processPayout:
+  - getAnalytics:
+auth:
+  - completeUserSetupAndProfile:
+hotspot:
+  - listHotspotsForProvider:
+  - createHotspot:
+  - updateHotspot:
+  - updateHotspotStatus:
+  - deleteHotspot:
+  - listActiveSessionsForProvider:
+  - listNearbyHotspots:
+  - getHotspotDetails:
+plan:
+  - listPlansForHotspot:
+  - createPlanForHotspot:
+  - updatePlan:
+  - deletePlan:
+token:
+  - purchasePlanAndGenerateToken:
+  - validateAccessTokenForCaptivePortal:
+  - reportDataUsage:
+  - listMyActiveTokens:
+transaction:
+  - createTransaction:
+  - updateTransactionStatus:
+  - listConsumerTransactions:
+  - listProviderTransactions:
+  - updatePayoutStatus:
+userProfile:
+  - getUserProfile:
+  - getProfile:
+  - updatePaystackAccount:
+  - makeAdminByEmail:
+  - makeAdmin:
+  - removeAdmin:
+  - listUsers:

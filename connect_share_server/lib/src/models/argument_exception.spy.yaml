@@ -1,0 +1,5 @@
+exception: ArgumentException
+fields:
+  message: String, default="Invalid argument provided"
+  parameterName: String?
+  errorCode: int, default=400

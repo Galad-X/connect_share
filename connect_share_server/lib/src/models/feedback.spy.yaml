@@ -1,0 +1,11 @@
+class: Feedback
+table: feedback
+fields:
+  userId: int, relation(parent=serverpod_user_info)
+  type: String # 'complaint' or 'suggestion'
+  content: String
+  submittedAt: DateTime
+  status: String # 'open', 'responded', 'closed'
+  response: String?
+  respondedAt: DateTime?
+  respondedBy: int?, relation(parent=serverpod_user_info)

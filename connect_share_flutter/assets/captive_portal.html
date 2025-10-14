@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConnectShare WiFi Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #message {
+            margin-top: 10px;
+            color: #d9534f;
+        }
+
+        .success {
+            color: #5cb85c;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>ConnectShare WiFi Access</h1>
+        <form id="tokenForm">
+            <input type="text" id="token" placeholder="Enter your access token" required>
+            <button type="submit">Connect</button>
+        </form>
+        <div id="message"></div>
+    </div>
+    <script>
+        document.getElementById('tokenForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = document.getElementById('token').value;
+            const messageDiv = document.getElementById('message');
+
+            try {
+                const response = await fetch('/validate-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    messageDiv.className = 'success';
+                    messageDiv.textContent = result.message;
+                    if (result.remainingDataGB) {
+                        messageDiv.textContent += ` Remaining: ${result.remainingDataGB.toFixed(2)} GB`;
+                    }
+                    if (result.expiryTime) {
+                        messageDiv.textContent += ` Valid until: ${new Date(result.expiryTime).toLocaleString()}`;
+                    }
+                    // Redirect to a success page or refresh after a delay
+                    setTimeout(() => location.reload(), 3000);
+                } else {
+                    messageDiv.className = '';
+                    messageDiv.textContent = result.message;
+                }
+            } catch (error) {
+                messageDiv.className = '';
+                messageDiv.textContent = 'Error connecting to server';
+            }
+        });
+    </script>
+</body>
+
+</html>

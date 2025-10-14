@@ -1,0 +1,6 @@
+class: AnalyticsData
+fields:
+  totalUsers: int
+  activeHotspots: int
+  successfulTransactions: int
+  totalDataUsedMB: int

@@ -1,0 +1,24 @@
+class: TransactionLog
+table: transaction_log
+fields:
+  consumerId: int, relation(parent=serverpod_user_info)
+  providerId: int, relation(parent=serverpod_user_info) # Provider who owns the hotspot
+  hotspotId: int, relation(parent= hotspot_config)
+  planId: int, relation(parent= plan)
+  accessTokenId: int?, relation(parent= access_token) # Token generated from this transaction
+  paystackReference: String # Paystack's transaction reference
+  amountPaid: double # Amount paid by consumer
+  currency: String
+  transactionDate: DateTime
+  status: String # e.g., "pending", "successful", "failed", "refunded"
+  platformFee: double?
+  providerPayoutAmount: double?
+  payoutStatus: String? # e.g., "pending_payout", "paid_out", "payout_failed"
+indexes:
+  transaction_log_paystack_ref_idx:
+    # fields: paystackReference
+    unique: true
+  transaction_log_consumer_id_date_idx:
+    fields: consumerId, transactionDate
+  transaction_log_provider_id_payout_status_idx:
+    fields: providerId, payoutStatus

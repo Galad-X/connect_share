@@ -1,0 +1,18 @@
+class: UserProfile
+table: user_profile
+fields:
+  userId: int, relation(parent=serverpod_user_info)
+  paystackAccountId: String?
+  displayName: String
+  bio: String?
+  hotspotCount: int, default=0
+  sharedDataLimit: double
+  currentDataUsage: double, default=0
+  rating: double, default=5.0
+  isHotspotProvider: bool, default=false
+  lastActiveTime: DateTime?
+  role: String, default='consumer' # New field for role
+indexes:
+  user_profile_user_id_idx:
+    fields: userId
+    unique: true

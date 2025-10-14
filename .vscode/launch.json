@@ -1,0 +1,49 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart"
+        },
+        {
+            "name": "connect_share_client",
+            "cwd": "connect_share_client",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "connect_share_flutter",
+            "cwd": "connect_share_flutter",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart"
+        },
+        {
+            "name": "connect_share_flutter (profile mode)",
+            "cwd": "connect_share_flutter",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "connect_share_flutter (release mode)",
+            "cwd": "connect_share_flutter",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "program": "lib/main.dart"
+        },
+        {
+            "name": "connect_share_server",
+            "cwd": "connect_share_server",
+            "request": "launch",
+            "type": "dart"
+        }
+    ]
+}

@@ -1,0 +1,19 @@
+class: HotspotConfig
+table: hotspot_config
+fields:
+  providerId: int, relation(parent=serverpod_user_info,) # Foreign key to provider's user ID
+  name: String
+  ssid: String?
+  latitude: double
+  longitude: double
+  geofenceRadiusMeters: double?
+  isActive: bool
+  createdAt: DateTime
+  lastOnlineAt: DateTime?
+indexes:
+  hotspot_config_provider_id_idx:
+    fields: providerId
+  hotspot_config_is_active_idx:
+    fields: isActive
+  hotspot_config_lat_lon_idx:
+    fields: latitude, longitude

@@ -1,0 +1,9 @@
+class: AccessTokenValidationResult
+# serverOnly: true # If this class is only used for server-side logic and not sent to client directly in this form
+fields:
+  isValid: bool
+  message: String?
+  userId: int?
+  planDetails: Plan? # The plan associated with the token
+  remainingDataBytes: double? # For metered plans (consider BigInt if it's bytes)
+  sessionExpiryTime: DateTime?

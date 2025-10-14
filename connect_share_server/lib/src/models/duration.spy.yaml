@@ -1,0 +1,7 @@
+  
+enum: PlanDurationType
+values:
+  - daily
+  - weekly
+  - monthly
+  - custom # e.g., for hourly plans

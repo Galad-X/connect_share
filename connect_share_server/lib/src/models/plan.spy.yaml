@@ -1,0 +1,20 @@
+class: Plan
+table: plan
+fields:
+  hotspotId: int, relation(parent =  hotspot_config) # Foreign key to hotspot_config.id
+  name: String
+  description: String?
+  type: PlanType # Enum (defined below or in a separate enums.spy.yaml)
+  durationType: PlanDurationType # Enum
+  durationValue: int # e.g., 1 for daily, 24 for 24 hours custom
+  price: double
+  currency: String # e.g., "NGN", "USD"
+  dataLimitGB: double? # For metered plans
+  bandwidthDownMbps: double?
+  bandwidthUpMbps: double?
+  isActive: bool # Whether this plan is currently offered
+indexes:
+  plan_hotspot_id_is_active_idx:
+    fields: hotspotId, isActive
+
+ 

@@ -1,0 +1,11 @@
+class: Policy
+table: policy
+fields:
+  type: String # 'terms' or 'privacy'
+  content: String
+  updatedAt: DateTime
+  updatedBy: int, relation(parent=serverpod_user_info)
+indexes:
+  policy_type_idx:
+    fields: type
+    unique: true
