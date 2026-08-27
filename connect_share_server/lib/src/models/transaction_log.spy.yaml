@@ -16,7 +16,7 @@ fields:
   payoutStatus: String? # e.g., "pending_payout", "paid_out", "payout_failed"
 indexes:
   transaction_log_paystack_ref_idx:
-    # fields: paystackReference
+    fields: paystackReference
     unique: true
   transaction_log_consumer_id_date_idx:
     fields: consumerId, transactionDate

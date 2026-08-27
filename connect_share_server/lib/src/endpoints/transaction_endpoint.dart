@@ -1,7 +1,206 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+
 import 'package:serverpod/serverpod.dart';
 import '../generated/protocol.dart'; // Access to TransactionLog, UserProfile, HotspotConfig, Plan, AccessToken
 
 class TransactionEndpoint extends Endpoint {
+  Future<void> _ensureAdmin(Session session) async {
+    final user = await session.authenticated;
+    if (user == null) {
+      throw AuthenticationException(message: 'User not authenticated.');
+    }
+    if (!user.scopes.any((scope) => scope.name == 'admin')) {
+      throw AuthenticationException(message: 'Admin access required.');
+    }
+  }
+
+  /// Initializes hosted checkout without exposing the Paystack secret to the
+  /// mobile application.
+  Future<List<String>> initializePayment(
+    Session session,
+    String paystackReference,
+    String email,
+    int hotspotId,
+    int planId,
+  ) async {
+    final authenticated = await session.authenticated;
+    if (authenticated == null) {
+      throw AuthenticationException(message: 'User not authenticated.');
+    }
+    final plan = await Plan.db.findById(session, planId);
+    final hotspot = await HotspotConfig.db.findById(session, hotspotId);
+    if (plan == null || !plan.isActive || hotspot == null || !hotspot.isActive ||
+        plan.hotspotId != hotspotId || email.trim().isEmpty) {
+      throw ArgumentException(message: 'Invalid payment details.');
+    }
+    final secretKey = Serverpod.instance.passwords['paystackSecretKey'];
+    if (secretKey == null || secretKey.isEmpty) {
+      throw Exception('Paystack is not configured on the server.');
+    }
+
+    final httpClient = HttpClient();
+    try {
+      final request = await httpClient.postUrl(
+        Uri.parse('https://api.paystack.co/transaction/initialize'),
+      );
+      request.headers
+        ..set(HttpHeaders.authorizationHeader, 'Bearer $secretKey')
+        ..set(HttpHeaders.contentTypeHeader, 'application/json');
+      request.write(jsonEncode({
+        'email': email.trim(),
+        'amount': (plan.price * 100).round(),
+        'currency': plan.currency.toUpperCase(),
+        'reference': paystackReference,
+        'metadata': {'hotspot_id': hotspotId, 'plan_id': planId},
+      }));
+      final response = await request.close();
+      final payload = jsonDecode(await response.transform(utf8.decoder).join());
+      final data = payload is Map<String, dynamic>
+          ? payload['data'] as Map<String, dynamic>?
+          : null;
+      if (response.statusCode < 200 || response.statusCode >= 300 ||
+          payload['status'] != true || data == null) {
+        throw ArgumentException(message: 'Unable to initialize payment.');
+      }
+      return [
+        data['authorization_url']?.toString() ?? '',
+        data['access_code']?.toString() ?? '',
+        data['reference']?.toString() ?? paystackReference,
+      ];
+    } finally {
+      httpClient.close(force: true);
+    }
+  }
+
+  /// Verify payment on the server and issue a token only after the amount,
+  /// currency, reference, and Paystack status match.
+  Future<AccessToken> verifyPaymentAndGenerateToken(
+    Session session,
+    String paystackReference,
+    int hotspotId,
+    int planId,
+  ) async {
+    final authenticated = await session.authenticated;
+    if (authenticated == null) {
+      throw AuthenticationException(message: 'User not authenticated.');
+    }
+    if (paystackReference.trim().isEmpty) {
+      throw ArgumentException(message: 'Payment reference is required.');
+    }
+
+    final plan = await Plan.db.findById(session, planId);
+    final hotspot = await HotspotConfig.db.findById(session, hotspotId);
+    if (plan == null || !plan.isActive || hotspot == null || !hotspot.isActive ||
+        plan.hotspotId != hotspotId) {
+      throw ArgumentException(message: 'Plan or hotspot is unavailable.');
+    }
+
+    final secretKey = Serverpod.instance.passwords['paystackSecretKey'];
+    if (secretKey == null || secretKey.isEmpty) {
+      throw Exception('Paystack is not configured on the server.');
+    }
+
+    final httpClient = HttpClient();
+    try {
+      final request = await httpClient.getUrl(Uri.parse(
+          'https://api.paystack.co/transaction/verify/${Uri.encodeComponent(paystackReference)}'));
+      request.headers.set(HttpHeaders.authorizationHeader, 'Bearer $secretKey');
+      final response = await request.close();
+      final payload = jsonDecode(await response.transform(utf8.decoder).join());
+      final data = payload is Map<String, dynamic>
+          ? payload['data'] as Map<String, dynamic>?
+          : null;
+      final paidAmount = data?['amount'];
+      final paidCurrency = data?['currency']?.toString().toUpperCase();
+      final paidStatus = data?['status']?.toString().toLowerCase();
+      if (response.statusCode < 200 || response.statusCode >= 300 ||
+          payload['status'] != true || paidStatus != 'success' ||
+          paidAmount is! num || paidAmount.round() != (plan.price * 100).round() ||
+          paidCurrency != plan.currency.toUpperCase()) {
+        throw ArgumentException(message: 'Payment could not be verified.');
+      }
+    } finally {
+      httpClient.close(force: true);
+    }
+
+    final existing = await TransactionLog.db.findFirstRow(
+      session,
+      where: (t) => t.paystackReference.equals(paystackReference),
+    );
+    if (existing != null) {
+      if (existing.consumerId != authenticated.userId ||
+          existing.hotspotId != hotspotId || existing.planId != planId) {
+        throw AuthenticationException(message: 'Payment reference is already in use.');
+      }
+      if (existing.accessTokenId != null) {
+        final token = await AccessToken.db.findById(session, existing.accessTokenId!);
+        if (token != null) return token;
+      }
+    }
+
+    final now = DateTime.now().toUtc();
+    final expiryDate = switch (plan.durationType) {
+      PlanDurationType.daily => now.add(Duration(days: plan.durationValue)),
+      PlanDurationType.weekly => now.add(Duration(days: 7 * plan.durationValue)),
+      PlanDurationType.monthly => DateTime.utc(now.year, now.month + plan.durationValue,
+          now.day, now.hour, now.minute, now.second),
+      PlanDurationType.custom => now.add(Duration(hours: plan.durationValue)),
+    };
+    return await session.db.transaction((dbTransaction) async {
+      final token = await AccessToken.db.insertRow(
+        session,
+        AccessToken(
+          tokenValue:
+              'SPW-${base64UrlEncode(List<int>.generate(32, (_) => Random.secure().nextInt(256)))}',
+          consumerId: authenticated.userId,
+          hotspotId: hotspotId,
+          planId: planId,
+          issueDate: now,
+          expiryDate: expiryDate,
+          isActive: true,
+          dataUsedBytes: BigInt.zero,
+        ),
+        transaction: dbTransaction,
+      );
+
+      final transaction = existing ?? TransactionLog(
+        consumerId: authenticated.userId,
+        providerId: hotspot.providerId,
+        hotspotId: hotspotId,
+        planId: planId,
+        accessTokenId: token.id,
+        paystackReference: paystackReference,
+        amountPaid: plan.price,
+        currency: plan.currency,
+        transactionDate: now,
+        status: 'successful',
+        platformFee: plan.price * 0.05,
+        providerPayoutAmount: plan.price * 0.95,
+        payoutStatus: 'pending_payout',
+      );
+      if (existing == null) {
+        await TransactionLog.db.insertRow(
+          session,
+          transaction,
+          transaction: dbTransaction,
+        );
+      } else {
+        await TransactionLog.db.updateRow(
+          session,
+          transaction.copyWith(
+            accessTokenId: token.id,
+            status: 'successful',
+            payoutStatus: 'pending_payout',
+          ),
+          transaction: dbTransaction,
+        );
+      }
+      return token;
+    });
+  }
+
   // Create a new transaction after initiating a payment
   // Consumer must be authenticated
   Future<TransactionLog> createTransaction(
@@ -77,11 +276,7 @@ class TransactionEndpoint extends Endpoint {
   Future<TransactionLog> updateTransactionStatus(
       Session session, String paystackReference, String newStatus,
       {int? accessTokenId}) async {
-    final authenticated = await session.authenticated;
-    if (authenticated == null) {
-      throw AuthenticationException(message: 'User not authenticated.');
-    }
-    // TODO: Restrict to admin or system (e.g., check scopeNames for 'admin')
+    await _ensureAdmin(session);
 
     // Validate status
     if (!['pending', 'successful', 'failed', 'refunded'].contains(newStatus)) {
@@ -161,11 +356,7 @@ class TransactionEndpoint extends Endpoint {
   // Restricted to admin or system
   Future<TransactionLog> updatePayoutStatus(
       Session session, String paystackReference, String newPayoutStatus) async {
-    final authenticated = await session.authenticated;
-    if (authenticated == null) {
-      throw AuthenticationException(message: 'User not authenticated.');
-    }
-    // TODO: Restrict to admin or system (e.g., check scopeNames for 'admin')
+    await _ensureAdmin(session);
 
     // Validate payout status
     if (!['pending_payout', 'paid_out', 'payout_failed']

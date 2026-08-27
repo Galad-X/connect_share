@@ -12,10 +12,13 @@ Future<void> initializeServerpodClient() async {
 
   // On a real device replace the ipAddress with the IP address of your computer.
 
-  // Configure server URL from environment or default to localhost
+  // Configure the URL explicitly for real devices:
+  // flutter run --dart-define=SERVERPOD_URL=http://<computer-ip>:8083/
   const serverUrlFromEnv = String.fromEnvironment('SERVERPOD_URL');
-  final serverUrl =
-      serverUrlFromEnv.isEmpty ? 'http://192.168.111.48:8083/' : serverUrlFromEnv;
+  final defaultServerUrl = defaultTargetPlatform == TargetPlatform.android
+      ? 'http://10.0.2.2:8083/'
+      : 'http://localhost:8083/';
+  final serverUrl = serverUrlFromEnv.isEmpty ? defaultServerUrl : serverUrlFromEnv;
 
   debugPrint('Connecting to Serverpod server at: $serverUrl'); // Debug log
 

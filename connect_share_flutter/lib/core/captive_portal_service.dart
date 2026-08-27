@@ -44,13 +44,22 @@ class CaptivePortalService {
           final body = await request.readAsString();
           final data = jsonDecode(body);
           final String? token = data['token'];
-          final String clientMac =
-              request.headers['x-client-mac'] ?? 'unknown';
+          final clientMac = request.headers['x-client-mac']?.trim();
 
-          if (token == null) {
+          if (token == null || token.trim().isEmpty) {
             return shelf.Response(
               400,
               body: jsonEncode({'success': false, 'message': 'Token required'}),
+              headers: {'content-type': 'application/json'},
+            );
+          }
+          if (clientMac == null || clientMac.isEmpty) {
+            return shelf.Response(
+              400,
+              body: jsonEncode({
+                'success': false,
+                'message': 'Device identifier required'
+              }),
               headers: {'content-type': 'application/json'},
             );
           }

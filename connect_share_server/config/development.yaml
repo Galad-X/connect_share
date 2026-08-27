@@ -67,8 +67,7 @@ futureCall:
 # Configuration for the main API server.
 apiServer:
   port: 8083
-  # CHANGED: Use 0.0.0.0 to accept connections from any IP address
-  publicHost: 192.168.111.48
+  publicHost: localhost
   publicPort: 8083
   publicScheme: http
 

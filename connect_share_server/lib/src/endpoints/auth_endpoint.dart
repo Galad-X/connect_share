@@ -25,10 +25,14 @@ class AuthEndpoint extends Endpoint {
 
     // Validate roleName
     String normalizedRoleName = roleName.toLowerCase();
-    if (!['consumer', 'provider', 'admin'].contains(normalizedRoleName)) {
+    if (!['consumer', 'provider'].contains(normalizedRoleName)) {
       throw ArgumentException(
           message:
-              'Invalid role specified. Must be "consumer", "provider", or "admin".');
+              'Invalid role specified. Must be "consumer" or "provider".');
+    }
+    if (displayNameForProfile.trim().isEmpty ||
+        displayNameForProfile.length > 120) {
+      throw ArgumentException(message: 'Invalid display name.');
     }
 
     // Prepare scopeNames list - add to existing scopes

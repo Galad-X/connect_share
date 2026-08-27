@@ -1,77 +1,16 @@
 import 'package:serverpod/serverpod.dart';
-import 'dart:convert';
-import 'dart:math'; // For random token generation
 import '../generated/protocol.dart';
 
 
 class TokenEndpoint extends Endpoint {
-  // Consumer purchases a plan and a token is generated.
-  // Consumer must be authenticated.
-  Future<AccessToken?> purchasePlanAndGenerateToken(
-      Session session, int hotspotId, int planId) async {
-    final authenticated = await session.authenticated;
-    if (authenticated == null) {
-      throw AuthenticationException(message: 'User not authenticated.');
-    }
-    final userId = authenticated.userId;
-
-    final plan = await Plan.db.findById(session, planId);
-    if (plan == null || !plan.isActive) {
-      throw Exception('Plan not found or is inactive.');
-    }
-    if (plan.hotspotId != hotspotId) {
-      throw ArgumentException(message: 'Plan does not belong to the specified hotspot.');
-    }
-
-    final hotspot = await HotspotConfig.db.findById(session, hotspotId);
-    if (hotspot == null || !hotspot.isActive) {
-      throw Exception('Hotspot not found or is inactive.');
-    }
-
-    // TODO: Integrate with payment verification here.
-    // This endpoint should be called *after* payment is confirmed.
-
-    final now = DateTime.now().toUtc();
-    DateTime expiryDate;
-    switch (plan.durationType) {
-      case PlanDurationType.daily:
-        expiryDate = now.add(Duration(days: plan.durationValue));
-        break;
-      case PlanDurationType.weekly:
-        expiryDate = now.add(Duration(days: 7 * plan.durationValue));
-        break;
-      case PlanDurationType.monthly:
-        expiryDate = DateTime.utc(now.year, now.month + plan.durationValue,
-            now.day, now.hour, now.minute, now.second);
-        break;
-      case PlanDurationType.custom:
-        expiryDate = now.add(Duration(hours: plan.durationValue));
-        break;
-    }
-
-    final tokenValue = _generateSecureToken();
-    final accessToken = AccessToken(
-      tokenValue: tokenValue,
-      consumerId: userId,
-      hotspotId: hotspotId,
-      planId: planId,
-      issueDate: now,
-      expiryDate: expiryDate,
-      isActive: true,
-      dataUsedBytes: BigInt.zero, // Initialize as BigInt
-    );
-
-    await AccessToken.db.insertRow(session, accessToken);
-    return accessToken;
-  }
-
   // Captive portal validates a token.
   Future<AccessTokenValidationResult> validateAccessTokenForCaptivePortal(
       Session session,
       String tokenValue,
       String clientMacAddress,
       int hotspotId) async {
-    if (tokenValue.isEmpty || clientMacAddress.isEmpty) {
+    if (tokenValue.trim().isEmpty || clientMacAddress.trim().isEmpty ||
+        clientMacAddress.length > 256) {
       return AccessTokenValidationResult(
           isValid: false, message: 'Invalid token or device identifier.');
     }
@@ -90,6 +29,12 @@ class TokenEndpoint extends Endpoint {
     if (!token.isActive) {
       return AccessTokenValidationResult(
           isValid: false, message: 'Token is inactive.');
+    }
+
+    if (token.lastUsedDeviceIdentifier != null &&
+        token.lastUsedDeviceIdentifier != clientMacAddress) {
+      return AccessTokenValidationResult(
+          isValid: false, message: 'Token is already bound to another device.');
     }
 
     final now = DateTime.now().toUtc();
@@ -156,6 +101,9 @@ class TokenEndpoint extends Endpoint {
       throw AuthenticationException(message: 'User not authenticated.');
     }
     final userId = authenticated.userId;
+    if (bytesUsed <= 0) {
+      throw ArgumentException(message: 'Bytes used must be positive.');
+    }
 
     final token = await AccessToken.db
         .findFirstRow(session, where: (t) => t.tokenValue.equals(tokenValue));
@@ -207,9 +155,4 @@ class TokenEndpoint extends Endpoint {
     );
   }
 
-  String _generateSecureToken() {
-    final random = Random.secure();
-    final values = List<int>.generate(16, (i) => random.nextInt(256));
-    return 'SPW-${base64UrlEncode(values)}';
-  }
 }

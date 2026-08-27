@@ -20,10 +20,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
   bool _isLoading = false;
   String? _errorMessage;
 
-  // Replace these with your actual Paystack credentials
-  static const String _paystackSecretKey = 'YOUR_PAYSTACK_SECRET_KEY';
   static const String _callbackUrl =
-      'YOUR_CALLBACK_URL'; // Must match dashboard config
+      String.fromEnvironment('PAYSTACK_CALLBACK_URL');
 
   Future<void> _processPayment() async {
     setState(() {
@@ -32,62 +30,41 @@ class _PaymentScreenState extends State<PaymentScreen> {
     });
 
     try {
+      if (_callbackUrl.isEmpty) {
+        throw Exception('Payment is not configured. Set PAYSTACK_CALLBACK_URL.');
+      }
       final userInfo = sessionManager.signedInUser;
       if (userInfo == null) throw Exception('User not authenticated');
 
       // Create a unique reference for the transaction
       final reference = 'tx_${DateTime.now().millisecondsSinceEpoch}';
 
-      // Step 1: Create transaction request object
-      final request = PaystackTransactionRequest(
-        reference: reference,
-        secretKey: _paystackSecretKey,
-        email: userInfo.email!,
-        amount: (widget.plan.price * 100).toDouble(),
-        currency: _getCurrency(widget.plan.currency),
-        channel: [
-          PaystackPaymentChannel.mobileMoney,
-          PaystackPaymentChannel.card,
-          PaystackPaymentChannel.ussd,
-          PaystackPaymentChannel.bankTransfer,
-          PaystackPaymentChannel.bank,
-          PaystackPaymentChannel.qr,
-          PaystackPaymentChannel.eft,
-        ],
-        metadata: {
-          'hotspot_id': widget.hotspot.id!,
-          'plan_id': widget.plan.id!,
-          'hotspot_name': widget.hotspot.name,
-          'plan_name': widget.plan.name,
-        },
+      final initialization = await client.transaction.initializePayment(
+        reference,
+        userInfo.email ?? '',
+        widget.hotspot.id!,
+        widget.plan.id!,
+      );
+      if (initialization.length < 3 || initialization[0].isEmpty ||
+          initialization[1].isEmpty) {
+        throw Exception('Payment initialization failed.');
+      }
+      final initializedTransaction = PaystackInitializedTraction(
+        status: true,
+        message: 'Payment initialized',
+        data: PaystackInitializedTractionData(
+          authorizationUrl: initialization[0],
+          accessCode: initialization[1],
+          reference: initialization[2],
+        ),
       );
 
-      // Step 2: Initialize the transaction
-      final initializedTransaction =
-          await PaymentService.initializeTransaction(request);
-
-      if (!initializedTransaction.status) {
-        throw Exception(initializedTransaction.message);
-      }
-
-      // Step 3: Show payment modal and verify transaction
-      final response = await PaymentService.showPaymentModal(
+      await PaymentService.showPaymentModal(
         context,
         transaction: initializedTransaction,
         callbackUrl: _callbackUrl,
-      ).then((_) async {
-        return await PaymentService.verifyTransaction(
-          paystackSecretKey: _paystackSecretKey,
-          initializedTransaction.data?.reference ?? reference,
-        );
-      });
-
-      // Handle successful payment
-      if (response.status && response.data.status == 'success') {
-        await _handleSuccessfulPayment(reference);
-      } else {
-        throw Exception('Payment verification failed or was not successful');
-      }
+      );
+      await _handleSuccessfulPayment(initialization[2]);
     } catch (e) {
       setState(() {
         _errorMessage = 'Payment failed: ${e.toString()}';
@@ -110,17 +87,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> _handleSuccessfulPayment(String reference) async {
     try {
-      // Create transaction record in your backend
-      await client.transaction.createTransaction(
-        widget.hotspot.id!,
-        widget.plan.id!,
+      await client.transaction.verifyPaymentAndGenerateToken(
         reference,
-        widget.plan.price,
-        widget.plan.currency,
-      );
-
-      // Generate token
-      await client.token.purchasePlanAndGenerateToken(
         widget.hotspot.id!,
         widget.plan.id!,
       );
@@ -140,23 +108,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
       );
     } catch (e) {
       throw Exception('Failed to process successful payment: ${e.toString()}');
-    }
-  }
-
-  PaystackCurrency _getCurrency(String currency) {
-    switch (currency.toUpperCase()) {
-      case 'NGN':
-        return PaystackCurrency.ngn;
-      case 'GHS':
-        return PaystackCurrency.ghs;
-      case 'USD':
-        return PaystackCurrency.usd;
-      case 'ZAR':
-        return PaystackCurrency.zar;
-      case 'KES':
-        return PaystackCurrency.kes;
-      default:
-        return PaystackCurrency.ngn; // Default fallback
     }
   }
 

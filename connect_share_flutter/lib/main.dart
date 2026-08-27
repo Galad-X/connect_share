@@ -78,12 +78,12 @@ class ConnectShareApp extends StatelessWidget {
           } else {
             final scopes = authState.userInfo!.scopeNames;
            
-            if (scopes.contains('provider')) {
+            if (scopes.contains('admin')) {
+              return const AdminMainNavigation();
+            } else if (scopes.contains('provider')) {
               return const ProviderMainNavigation();
             } else if (scopes.contains('consumer')) {
               return const ConsumerMainNavigation();
-            } else if (scopes.contains('admin')) {
-              return const AdminMainNavigation();
             } else {
               return const Center(child: Text('Unknown role'));
             }

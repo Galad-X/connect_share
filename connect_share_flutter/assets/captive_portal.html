@@ -74,6 +74,10 @@
         <div id="message"></div>
     </div>
     <script>
+        const deviceId = localStorage.getItem('connectshare_device_id') ||
+            (crypto.randomUUID ? crypto.randomUUID() : `device-${Date.now()}-${Math.random()}`);
+        localStorage.setItem('connectshare_device_id', deviceId);
+
         document.getElementById('tokenForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const token = document.getElementById('token').value;
@@ -82,7 +86,10 @@
             try {
                 const response = await fetch('/validate-token', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-client-mac': deviceId
+                    },
                     body: JSON.stringify({ token })
                 });
                 const result = await response.json();

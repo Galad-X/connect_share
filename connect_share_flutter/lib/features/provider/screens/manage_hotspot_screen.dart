@@ -175,7 +175,7 @@ class _ManageHotspotScreenState extends State<ManageHotspotScreen> {
               _activeHotspotConfigOnDevice = hotspot;
               _activeHotspotPassword = password;
               _successMessage =
-                  "${hotspot.name} activated! Portal at http://192.168.43.1:$_port";
+                  "${hotspot.name} activated using Android's system hotspot. Use the system hotspot credentials, then open the portal from the connected device.";
             });
             _fetchHotspots(); // Refresh list
           } else {

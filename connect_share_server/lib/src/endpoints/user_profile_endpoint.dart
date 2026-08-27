@@ -25,7 +25,8 @@ class UserProfileEndpoint extends Endpoint {
     }
 
     // Allow access if userId matches or user is admin
-    if (userInfo.userId != userId && !userInfo.scopes.contains('admin')) {
+    if (userInfo.userId != userId &&
+        !userInfo.scopes.any((scope) => scope.name == 'admin')) {
       throw AuthenticationException(
           message: 'Access denied to this user profile');
     }
@@ -140,8 +141,10 @@ class UserProfileEndpoint extends Endpoint {
     }
 
     // Update scopes
-   final scopes = userInfo.scopes.where((s) => s != 'admin').toList();
-    final scopeNames = scopes.map((scope) => scope.toString()).toList();
+    final scopeNames = userInfo.scopes
+        .where((scope) => scope.name != 'admin')
+        .map((scope) => scope.name)
+        .toList();
     await auth.UserInfo.db
         .updateRow(session, userInfo.copyWith(scopeNames: scopeNames));
 

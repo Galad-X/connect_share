@@ -8,8 +8,8 @@ class PlanEndpoint extends Endpoint {
       throw AuthenticationException(message: 'User not authenticated');
     }
     final hotspot = await HotspotConfig.db.findById(session, hotspotId);
-    if (hotspot == null || hotspot.providerId != userInfo.userId) {
-      throw AuthenticationException(message: 'Unauthorized access to hotspot');
+    if (hotspot == null || !hotspot.isActive) {
+      throw ArgumentException(message: 'Hotspot not found or inactive');
     }
     return await Plan.db.find(
       session,

@@ -26,7 +26,9 @@ class HotspotEndpoint extends Endpoint {
           ssid: ssid,
           latitude: latitude,
           longitude: longitude,
-          isActive: true,
+          // A saved configuration is not an active broadcast until the
+          // provider successfully starts tethering on the device.
+          isActive: false,
           createdAt: DateTime.now(),
         ));
   }

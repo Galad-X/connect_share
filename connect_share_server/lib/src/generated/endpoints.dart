@@ -21,6 +21,7 @@ import 'package:connect_share_server/src/generated/enums.dart' as _i9;
 import 'package:connect_share_server/src/generated/duration.dart' as _i10;
 import 'package:connect_share_server/src/generated/plan.dart' as _i11;
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i12;
+import 'package:connect_share_server/src/generated/access_token.dart' as _i13;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -661,31 +662,6 @@ class Endpoints extends _i1.EndpointDispatch {
       name: 'token',
       endpoint: endpoints['token']!,
       methodConnectors: {
-        'purchasePlanAndGenerateToken': _i1.MethodConnector(
-          name: 'purchasePlanAndGenerateToken',
-          params: {
-            'hotspotId': _i1.ParameterDescription(
-              name: 'hotspotId',
-              type: _i1.getType<int>(),
-              nullable: false,
-            ),
-            'planId': _i1.ParameterDescription(
-              name: 'planId',
-              type: _i1.getType<int>(),
-              nullable: false,
-            ),
-          },
-          call: (
-            _i1.Session session,
-            Map<String, dynamic> params,
-          ) async =>
-              (endpoints['token'] as _i6.TokenEndpoint)
-                  .purchasePlanAndGenerateToken(
-            session,
-            params['hotspotId'],
-            params['planId'],
-          ),
-        ),
         'validateAccessTokenForCaptivePortal': _i1.MethodConnector(
           name: 'validateAccessTokenForCaptivePortal',
           params: {
@@ -757,6 +733,60 @@ class Endpoints extends _i1.EndpointDispatch {
       name: 'transaction',
       endpoint: endpoints['transaction']!,
       methodConnectors: {
+        'initializePayment': _i1.MethodConnector(
+          name: 'initializePayment',
+          params: {
+            'paystackReference': _i1.ParameterDescription(
+              name: 'paystackReference', type: _i1.getType<String>(), nullable: false,
+            ),
+            'email': _i1.ParameterDescription(
+              name: 'email', type: _i1.getType<String>(), nullable: false,
+            ),
+            'hotspotId': _i1.ParameterDescription(
+              name: 'hotspotId', type: _i1.getType<int>(), nullable: false,
+            ),
+            'planId': _i1.ParameterDescription(
+              name: 'planId', type: _i1.getType<int>(), nullable: false,
+            ),
+          },
+          call: (_i1.Session session, Map<String, dynamic> params) async =>
+              (endpoints['transaction'] as _i7.TransactionEndpoint)
+                  .initializePayment(
+            session, params['paystackReference'], params['email'],
+            params['hotspotId'], params['planId'],
+          ),
+        ),
+        'verifyPaymentAndGenerateToken': _i1.MethodConnector(
+          name: 'verifyPaymentAndGenerateToken',
+          params: {
+            'paystackReference': _i1.ParameterDescription(
+              name: 'paystackReference',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'hotspotId': _i1.ParameterDescription(
+              name: 'hotspotId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'planId': _i1.ParameterDescription(
+              name: 'planId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['transaction'] as _i7.TransactionEndpoint)
+                  .verifyPaymentAndGenerateToken(
+            session,
+            params['paystackReference'],
+            params['hotspotId'],
+            params['planId'],
+          ),
+        ),
         'createTransaction': _i1.MethodConnector(
           name: 'createTransaction',
           params: {

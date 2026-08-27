@@ -26,11 +26,19 @@ plan:
   - updatePlan:
   - deletePlan:
 token:
-  - purchasePlanAndGenerateToken:
   - validateAccessTokenForCaptivePortal:
   - reportDataUsage:
   - listMyActiveTokens:
 transaction:
+  - initializePayment:
+      - paystackReference
+      - email
+      - hotspotId
+      - planId
+  - verifyPaymentAndGenerateToken:
+      - paystackReference
+      - hotspotId
+      - planId
   - createTransaction:
   - updateTransactionStatus:
   - listConsumerTransactions:

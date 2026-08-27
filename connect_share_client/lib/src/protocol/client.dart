@@ -325,19 +325,6 @@ class EndpointToken extends _i1.EndpointRef {
   @override
   String get name => 'token';
 
-  _i2.Future<_i10.AccessToken?> purchasePlanAndGenerateToken(
-    int hotspotId,
-    int planId,
-  ) =>
-      caller.callServerEndpoint<_i10.AccessToken?>(
-        'token',
-        'purchasePlanAndGenerateToken',
-        {
-          'hotspotId': hotspotId,
-          'planId': planId,
-        },
-      );
-
   _i2.Future<_i14.AccessTokenValidationResult>
       validateAccessTokenForCaptivePortal(
     String tokenValue,
@@ -381,6 +368,38 @@ class EndpointTransaction extends _i1.EndpointRef {
 
   @override
   String get name => 'transaction';
+
+  _i2.Future<List<String>> initializePayment(
+    String paystackReference,
+    String email,
+    int hotspotId,
+    int planId,
+  ) =>
+      caller.callServerEndpoint<List<String>>(
+        'transaction',
+        'initializePayment',
+        {
+          'paystackReference': paystackReference,
+          'email': email,
+          'hotspotId': hotspotId,
+          'planId': planId,
+        },
+      );
+
+  _i2.Future<_i10.AccessToken> verifyPaymentAndGenerateToken(
+    String paystackReference,
+    int hotspotId,
+    int planId,
+  ) =>
+      caller.callServerEndpoint<_i10.AccessToken>(
+        'transaction',
+        'verifyPaymentAndGenerateToken',
+        {
+          'paystackReference': paystackReference,
+          'hotspotId': hotspotId,
+          'planId': planId,
+        },
+      );
 
   _i2.Future<_i6.TransactionLog> createTransaction(
     int hotspotId,
