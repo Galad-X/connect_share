@@ -77,7 +77,7 @@ class ConnectShareApp extends StatelessWidget {
             return const SignInScreen();
           } else {
             final scopes = authState.userInfo!.scopeNames;
-           
+
             if (scopes.contains('admin')) {
               return const AdminMainNavigation();
             } else if (scopes.contains('provider')) {
@@ -91,7 +91,7 @@ class ConnectShareApp extends StatelessWidget {
         },
       ),
       routes: {
-         '/signin': (context) => const  SignInScreen(),
+        '/signin': (context) => const SignInScreen(),
         // '/profile': (context) => const ProfileScreen(),
         // '/transactions': (context) => const TransactionHistoryScreen(),
       },

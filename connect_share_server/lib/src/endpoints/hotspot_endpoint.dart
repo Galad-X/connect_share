@@ -1,10 +1,10 @@
 import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_auth_server/serverpod_auth_server.dart';
 import '../generated/protocol.dart';
-
 
 class HotspotEndpoint extends Endpoint {
   Future<List<HotspotConfig>> listHotspotsForProvider(Session session) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }
@@ -14,7 +14,7 @@ class HotspotEndpoint extends Endpoint {
 
   Future<HotspotConfig> createHotspot(Session session, String name, String ssid,
       double latitude, double longitude) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }
@@ -35,7 +35,7 @@ class HotspotEndpoint extends Endpoint {
 
   Future<bool> updateHotspot(Session session, int hotspotId, String name,
       String ssid, double latitude, double longitude, bool isActive) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }
@@ -52,10 +52,11 @@ class HotspotEndpoint extends Endpoint {
         ));
     return true;
   }
+
   // updateHotspotStatus
   Future<bool> updateHotspotStatus(
       Session session, int hotspotId, bool isActive) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }
@@ -74,7 +75,7 @@ class HotspotEndpoint extends Endpoint {
   }
 
   Future<bool> deleteHotspot(Session session, int hotspotId) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }
@@ -86,7 +87,7 @@ class HotspotEndpoint extends Endpoint {
 
   Future<List<AccessToken>> listActiveSessionsForProvider(
       Session session) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }
@@ -94,12 +95,13 @@ class HotspotEndpoint extends Endpoint {
         .find(session, where: (t) => t.providerId.equals(userInfo.userId));
     final hotspotIds = hotspots.map((h) => h.id!).toList();
     return await AccessToken.db.find(session,
-        where: (t) => t.hotspotId.inSet((hotspotIds).toSet()) & t.isActive.equals(true));
+        where: (t) =>
+            t.hotspotId.inSet((hotspotIds).toSet()) & t.isActive.equals(true));
   }
 
   Future<List<HotspotConfig>> listNearbyHotspots(Session session,
       double latitude, double longitude, double radiusKm) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }

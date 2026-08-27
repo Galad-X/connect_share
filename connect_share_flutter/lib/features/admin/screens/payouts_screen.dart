@@ -3,9 +3,9 @@ import 'package:connect_share_client/connect_share_client.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/theme/app_colors.dart'; 
-import '../../../core/widgets/ui_helpers.dart'; 
-import '../../../src/serverpod_client.dart'; 
+import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/ui_helpers.dart';
+import '../../../src/serverpod_client.dart';
 
 class PayoutsScreen extends StatefulWidget {
   const PayoutsScreen({super.key});
@@ -18,8 +18,7 @@ class _PayoutsScreenState extends State<PayoutsScreen> {
   List<TransactionLog> _pendingPayouts = [];
   bool _isLoading = true;
   String? _errorMessage;
-  String _isProcessingPayoutForRef =
-      ""; 
+  String _isProcessingPayoutForRef = "";
   final _currencyFormat = NumberFormat.currency(symbol: '', decimalDigits: 2);
 
   @override

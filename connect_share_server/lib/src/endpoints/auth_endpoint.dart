@@ -1,10 +1,9 @@
 import 'package:serverpod/server.dart' as auth;
 import 'package:serverpod/serverpod.dart';
-import 'package:serverpod_auth_server/module.dart' as auth;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 import '../generated/protocol.dart'; // Access to UserProfile
 
 class AuthEndpoint extends Endpoint {
-
   Future<auth.UserInfo?> completeUserSetupAndProfile(
     Session session,
     int userId, // The ID of the UserInfo created by serverpod_auth
@@ -27,8 +26,7 @@ class AuthEndpoint extends Endpoint {
     String normalizedRoleName = roleName.toLowerCase();
     if (!['consumer', 'provider'].contains(normalizedRoleName)) {
       throw ArgumentException(
-          message:
-              'Invalid role specified. Must be "consumer" or "provider".');
+          message: 'Invalid role specified. Must be "consumer" or "provider".');
     }
     if (displayNameForProfile.trim().isEmpty ||
         displayNameForProfile.length > 120) {
@@ -85,6 +83,4 @@ class AuthEndpoint extends Endpoint {
 
     return userInfo; // Return the updated UserInfo
   }
-
-  
 }

@@ -118,8 +118,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   });
                   _fetchTransactions();
                 },
-                backgroundColor:
-                    AppColors.glassBackgroundColor.withAlpha(52),
+                backgroundColor: AppColors.glassBackgroundColor.withAlpha(52),
                 selectedColor: AppColors.matcha.withAlpha(104),
                 labelStyle: TextStyle(
                     color:
@@ -216,7 +215,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 ),
               ],
             ),
-           Divider(height: 16, color: AppColors.glassBorderColor),
+            Divider(height: 16, color: AppColors.glassBorderColor),
             _buildDetailRow(Icons.monetization_on_outlined, 'Amount Paid:',
                 '$currencySymbol ${_currencyFormat.format(transaction.amountPaid)}'),
             _buildDetailRow(Icons.person_outline, 'Consumer ID:',
@@ -232,9 +231,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                     .format(transaction.transactionDate.toLocal())),
             if (transaction.providerPayoutAmount != null &&
                 transaction.providerPayoutAmount! > 0) ...[
-               Divider(
-                  height: 12,
-                  color: AppColors.glassBorderColor.withAlpha(77)),
+              Divider(
+                  height: 12, color: AppColors.glassBorderColor.withAlpha(77)),
               _buildDetailRow(
                   Icons.account_balance_wallet_outlined,
                   'Provider Payout:',

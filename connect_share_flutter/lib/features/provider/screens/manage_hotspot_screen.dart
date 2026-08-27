@@ -237,7 +237,6 @@ class _ManageHotspotScreenState extends State<ManageHotspotScreen> {
         barrierColor: Colors.black.withAlpha(128),
         barrierDismissible: true,
       ),
-      
     );
   }
 

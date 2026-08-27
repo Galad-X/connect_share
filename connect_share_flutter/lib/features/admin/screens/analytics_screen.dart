@@ -187,7 +187,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             //     "$currency ${_numberFormat.format(totalRevenue)}",
             //     Icons.monetization_on_rounded,
             //     AppColors.success),
-           
+
             const SizedBox(height: 24),
             GlassmorphicCard(
               child: Padding(

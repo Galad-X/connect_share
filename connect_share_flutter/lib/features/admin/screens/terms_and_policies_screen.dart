@@ -177,7 +177,7 @@ class _TermsAndPoliciesScreenState extends State<TermsAndPoliciesScreen> {
               ),
             ],
           ),
-           Divider(height: 20, color: AppColors.glassBorderColor),
+          Divider(height: 20, color: AppColors.glassBorderColor),
           TextField(
             controller: controller,
             style: TextStyle(

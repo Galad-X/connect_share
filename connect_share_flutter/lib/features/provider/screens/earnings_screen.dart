@@ -253,7 +253,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                 )
               ],
             ),
-             Divider(
+            Divider(
                 height: 16, thickness: 0.5, color: AppColors.glassBorderColor),
             _buildDetailRow(Icons.monetization_on_outlined, 'Sale Amount:',
                 '$currencySymbol ${_currencyFormat.format(transaction.amountPaid)}'),

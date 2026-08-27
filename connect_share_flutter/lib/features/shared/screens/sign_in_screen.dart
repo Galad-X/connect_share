@@ -92,7 +92,6 @@ class SignInScreenState extends State<SignInScreen> {
           await _emailAuthController.signIn(email, password);
       debugPrint('Sign-in attempt result: $userInfo');
       if (userInfo != null) {
-       
       } else {
         setState(() {
           _errorMessage = 'Invalid email or password, or email not verified.';
@@ -511,62 +510,62 @@ class SignInScreenState extends State<SignInScreen> {
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
-                            children: [
+                          children: [
                             Text(
                               'ConnectShare',
                               style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 36,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.2,
+                                color: AppColors.textSecondary,
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               pageTitle,
                               style: TextStyle(
-                                color: AppColors.textTertiary, fontSize: 16),
+                                  color: AppColors.textTertiary, fontSize: 16),
                             ),
                             const SizedBox(height: 24),
                             AnimatedSwitcher(
                               duration: const Duration(milliseconds: 300),
                               transitionBuilder:
-                                (Widget child, Animation<double> animation) {
-                              return FadeTransition(
-                                opacity: animation,
-                                child: SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(0.0, 0.1),
-                                  end: Offset.zero,
-                                ).animate(animation),
-                                child: child,
-                                ),
-                              );
+                                  (Widget child, Animation<double> animation) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(0.0, 0.1),
+                                      end: Offset.zero,
+                                    ).animate(animation),
+                                    child: child,
+                                  ),
+                                );
                               },
                               child:
-                                currentFormFields, // This will switch based on _authStep
+                                  currentFormFields, // This will switch based on _authStep
                             ),
                             if (_errorMessage != null)
                               Padding(
-                              padding: const EdgeInsets.only(
-                                top: 16.0, bottom: 8.0),
-                              child: Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                color: AppColors.error.withAlpha(39),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: AppColors.error.withAlpha(128)),
+                                padding: const EdgeInsets.only(
+                                    top: 16.0, bottom: 8.0),
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.error.withAlpha(39),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                        color: AppColors.error.withAlpha(128)),
+                                  ),
+                                  child: Text(
+                                    _errorMessage!,
+                                    style: TextStyle(
+                                        color: AppColors.error,
+                                        fontWeight: FontWeight.w600),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
-                                child: Text(
-                                _errorMessage!,
-                                style: TextStyle(
-                                  color: AppColors.error,
-                                  fontWeight: FontWeight.w600),
-                                textAlign: TextAlign.center,
-                                ),
-                              ),
                               )
                             else
                               const SizedBox(height: 24),
@@ -574,37 +573,37 @@ class SignInScreenState extends State<SignInScreen> {
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.matcha,
-                                foregroundColor: Colors.white,
-                                padding:
-                                  const EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                                textStyle: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                              ),
-                              onPressed: _isLoading ? null : onSubmitAction,
-                              child: _isLoading
-                                ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white),
-                                  )
-                                : Text(submitButtonText),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.matcha,
+                                  foregroundColor: Colors.white,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  textStyle: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onPressed: _isLoading ? null : onSubmitAction,
+                                child: _isLoading
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white),
+                                      )
+                                    : Text(submitButtonText),
                               ),
                             ),
                             const SizedBox(height: 16),
                             TextButton(
                               onPressed: _isLoading ? null : onToggleAction,
                               child: Text(
-                              toggleButtonText,
-                              style: TextStyle(
-                                color: AppColors.textSecondary,
-                                fontWeight: FontWeight.w600),
+                                toggleButtonText,
+                                style: TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontWeight: FontWeight.w600),
                               ),
                             ),
                           ],

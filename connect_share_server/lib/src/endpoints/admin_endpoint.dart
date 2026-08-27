@@ -1,10 +1,10 @@
 import 'package:serverpod/serverpod.dart';
-import 'package:serverpod_auth_server/module.dart' as auth;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 import '../generated/protocol.dart';
 
 class AdminEndpoint extends Endpoint {
   Future<void> _ensureAdmin(Session session) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'Authentication required');
     }
@@ -39,7 +39,8 @@ class AdminEndpoint extends Endpoint {
     final userInfo = await auth.UserInfo.db.findById(session, userId);
     if (userInfo == null) throw ArgumentException(message: 'User not found');
     await auth.UserInfo.db.deleteRow(session, userInfo);
-    await UserProfile.db.deleteWhere(session, where: (t) => t.userId.equals(userId));
+    await UserProfile.db
+        .deleteWhere(session, where: (t) => t.userId.equals(userId));
   }
 
   Future<Policy?> getPolicy(Session session, String type) async {
@@ -62,7 +63,7 @@ class AdminEndpoint extends Endpoint {
     if (content.isEmpty || content.length > 10000) {
       throw ArgumentException(message: 'Invalid policy content');
     }
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     final policy = await Policy.db
         .findFirstRow(session, where: (t) => t.type.equals(type));
     final now = DateTime.now().toUtc();
@@ -105,8 +106,9 @@ class AdminEndpoint extends Endpoint {
       throw ArgumentException(message: 'Invalid response');
     }
     final feedback = await Feedback.db.findById(session, feedbackId);
-    if (feedback == null) throw ArgumentException(message: 'Feedback not found');
-    final userInfo = await session.authenticated;
+    if (feedback == null)
+      throw ArgumentException(message: 'Feedback not found');
+    final userInfo = session.authenticated;
     await Feedback.db.updateRow(
         session,
         feedback.copyWith(
@@ -135,7 +137,8 @@ class AdminEndpoint extends Endpoint {
       session,
       where: (t) => t.paystackReference.equals(paystackReference),
     );
-    if (transaction == null) throw ArgumentException(message: 'Transaction not found');
+    if (transaction == null)
+      throw ArgumentException(message: 'Transaction not found');
     if (transaction.payoutStatus != 'pending_payout') {
       throw ArgumentException(message: 'Invalid payout status');
     }
@@ -146,6 +149,7 @@ class AdminEndpoint extends Endpoint {
           payoutStatus: 'paid_out',
         ));
   }
+
 // Quick fix - change return type to Map<String, Object>
   Future<AnalyticsData> getAnalytics(Session session) async {
     await _ensureAdmin(session);

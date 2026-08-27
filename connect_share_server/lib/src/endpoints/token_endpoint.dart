@@ -1,6 +1,6 @@
 import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_auth_server/serverpod_auth_server.dart';
 import '../generated/protocol.dart';
-
 
 class TokenEndpoint extends Endpoint {
   // Captive portal validates a token.
@@ -9,7 +9,8 @@ class TokenEndpoint extends Endpoint {
       String tokenValue,
       String clientMacAddress,
       int hotspotId) async {
-    if (tokenValue.trim().isEmpty || clientMacAddress.trim().isEmpty ||
+    if (tokenValue.trim().isEmpty ||
+        clientMacAddress.trim().isEmpty ||
         clientMacAddress.length > 256) {
       return AccessTokenValidationResult(
           isValid: false, message: 'Invalid token or device identifier.');
@@ -96,7 +97,7 @@ class TokenEndpoint extends Endpoint {
   // Provider's app reports data usage for a token (for metered plans)
   Future<void> reportDataUsage(
       Session session, String tokenValue, int bytesUsed) async {
-    final authenticated = await session.authenticated;
+    final authenticated = session.authenticated;
     if (authenticated == null) {
       throw AuthenticationException(message: 'User not authenticated.');
     }
@@ -136,9 +137,9 @@ class TokenEndpoint extends Endpoint {
   }
 
   // Get active tokens for the authenticated consumer
- // Get active tokens for the authenticated consumer
+  // Get active tokens for the authenticated consumer
   Future<List<AccessToken>> listMyActiveTokens(Session session) async {
-    final authenticated = await session.authenticated;
+    final authenticated = session.authenticated;
     if (authenticated == null) {
       throw AuthenticationException(message: 'User not authenticated.');
     }
@@ -154,5 +155,4 @@ class TokenEndpoint extends Endpoint {
       orderBy: (t) => t.expiryDate,
     );
   }
-
 }

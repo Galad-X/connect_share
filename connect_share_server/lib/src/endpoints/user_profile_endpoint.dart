@@ -1,11 +1,11 @@
 import 'package:serverpod/serverpod.dart';
-import 'package:serverpod_auth_server/module.dart' as auth;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 import '../generated/protocol.dart';
 
 class UserProfileEndpoint extends Endpoint {
   // Helper method to ensure admin access
-   Future<void> _ensureAdmin(Session session) async {
-    final userInfo = await session.authenticated;
+  Future<void> _ensureAdmin(Session session) async {
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'Authentication required');
     }
@@ -19,7 +19,7 @@ class UserProfileEndpoint extends Endpoint {
 
   // Fetch user profile by userId (restricted to own profile or admin)
   Future<UserProfile?> getUserProfile(Session session, int userId) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }
@@ -37,7 +37,7 @@ class UserProfileEndpoint extends Endpoint {
 
   // Fetch authenticated user's profile
   Future<UserProfile?> getProfile(Session session) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }
@@ -50,7 +50,7 @@ class UserProfileEndpoint extends Endpoint {
   // Update Paystack account ID in the user profile
   Future<bool> updatePaystackAccount(
       Session session, String paystackAccountId) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }
@@ -135,15 +135,17 @@ class UserProfileEndpoint extends Endpoint {
     }
 
     // Prevent removing admin role from self
-    final currentUser = await session.authenticated;
+    final currentUser = session.authenticated;
     if (currentUser!.userId == userId) {
-      throw ArgumentException(message: 'Cannot remove admin role from yourself');
+      throw ArgumentException(
+          message: 'Cannot remove admin role from yourself');
     }
 
     // Update scopes
     final scopeNames = userInfo.scopes
         .where((scope) => scope.name != 'admin')
         .map((scope) => scope.name)
+        .whereType<String>()
         .toList();
     await auth.UserInfo.db
         .updateRow(session, userInfo.copyWith(scopeNames: scopeNames));

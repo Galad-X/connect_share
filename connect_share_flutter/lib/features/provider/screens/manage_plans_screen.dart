@@ -213,10 +213,8 @@ class _ManagePlansScreenState extends State<ManagePlansScreen> {
                       'Duration Value (e.g., 1, 24)', Icons.timer_outlined,
                       keyboardType: TextInputType.number),
                   if (_selectedPlanType == PlanType.metered)
-                    _buildDialogTextField(
-                        _dataLimitController,
-                        'Data Limit (GB,)',
-                        Icons.data_usage_outlined,
+                    _buildDialogTextField(_dataLimitController,
+                        'Data Limit (GB,)', Icons.data_usage_outlined,
                         keyboardType:
                             TextInputType.numberWithOptions(decimal: true),
                         isOptional: _selectedPlanType == PlanType.metered),
@@ -613,8 +611,7 @@ class _ManagePlansScreenState extends State<ManagePlansScreen> {
                         content: Text(
                             'Are you sure you want to delete plan "${plan.name}"?',
                             style: TextStyle(color: AppColors.hintColor)),
-                        backgroundColor:
-                            AppColors.deepArmyDark.withAlpha(229),
+                        backgroundColor: AppColors.deepArmyDark.withAlpha(229),
                         actions: [
                           TextButton(
                               onPressed: () => Navigator.of(ctx).pop(false),
@@ -633,14 +630,14 @@ class _ManagePlansScreenState extends State<ManagePlansScreen> {
                       try {
                         await client.plan.deletePlan(plan.id!);
                         _fetchPlansForSelectedHotspot();
-                         if (!mounted) return;
+                        if (!mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                               content: Text('Plan "${plan.name}" deleted.'),
                               backgroundColor: AppColors.success),
                         );
                       } catch (e) {
-                         if (!mounted) return;
+                        if (!mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                               content: Text(

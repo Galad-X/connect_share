@@ -18,7 +18,8 @@ Future<void> initializeServerpodClient() async {
   final defaultServerUrl = defaultTargetPlatform == TargetPlatform.android
       ? 'http://10.0.2.2:8083/'
       : 'http://localhost:8083/';
-  final serverUrl = serverUrlFromEnv.isEmpty ? defaultServerUrl : serverUrlFromEnv;
+  final serverUrl =
+      serverUrlFromEnv.isEmpty ? defaultServerUrl : serverUrlFromEnv;
 
   debugPrint('Connecting to Serverpod server at: $serverUrl'); // Debug log
 
@@ -28,13 +29,11 @@ Future<void> initializeServerpodClient() async {
     authenticationKeyManager: FlutterAuthenticationKeyManager(),
   )..connectivityMonitor = FlutterConnectivityMonitor();
 
-
   // Sets up a singleton client object that can be used to talk to the server from
   // anywhere in our app. The client is generated from your server code.
   // The client is set up to connect to a Serverpod running on a local server on
   // the default port. You will need to modify this to connect to staging or
   // production servers.
-  
 
   // The session manager keeps track of the signed-in state of the user. You
   // can query it to see if the user is currently signed in and get information

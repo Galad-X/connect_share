@@ -31,7 +31,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     try {
       if (_callbackUrl.isEmpty) {
-        throw Exception('Payment is not configured. Set PAYSTACK_CALLBACK_URL.');
+        throw Exception(
+            'Payment is not configured. Set PAYSTACK_CALLBACK_URL.');
       }
       final userInfo = sessionManager.signedInUser;
       if (userInfo == null) throw Exception('User not authenticated');
@@ -45,7 +46,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
         widget.hotspot.id!,
         widget.plan.id!,
       );
-      if (initialization.length < 3 || initialization[0].isEmpty ||
+      if (initialization.length < 3 ||
+          initialization[0].isEmpty ||
           initialization[1].isEmpty) {
         throw Exception('Payment initialization failed.');
       }

@@ -747,50 +747,50 @@ packages:
     dependency: "direct main"
     description:
       name: serverpod_auth_client
-      sha256: "735b0b92fd732303d4886301edb49f6c73580519bd375441837e042e17a2c704"
+      sha256: b0d3ce4d0811dcabff5c96823767d0332cc002dba6abf174cc5c72808ff4ba21
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.0"
+    version: "3.4.12"
   serverpod_auth_email_flutter:
     dependency: "direct main"
     description:
       name: serverpod_auth_email_flutter
-      sha256: f71e31237aa2a29474115e4a720f2378b5dbe3c243545f2835a7ddde41e2606d
+      sha256: bc6edcff91dc6d4948e47aae696a1722eb5747df03baf338fbcb2ac9ac0cbbc8
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.0"
+    version: "3.4.12"
   serverpod_auth_shared_flutter:
     dependency: "direct main"
     description:
       name: serverpod_auth_shared_flutter
-      sha256: "2203c922ff1527dea6a5d02865738c665043dff48596f2dacef314efb41370a9"
+      sha256: "5d1042728544f3aea2f765b5ee79fb9c4ab6e9224af84741bc2086cb21a00d6a"
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.0"
+    version: "3.4.12"
   serverpod_client:
     dependency: transitive
     description:
       name: serverpod_client
-      sha256: "31486fedef0e18f18e7537c46cea2a0ed844407fc7a262e21010c917f276b393"
+      sha256: abc79908adf3042c113dd7792dd0e183dc93208794299309bbf56821f3153d7c
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.0"
+    version: "3.4.12"
   serverpod_flutter:
     dependency: "direct main"
     description:
       name: serverpod_flutter
-      sha256: "363bb23519a7a416dab9a8c4ce1029e963ce38d7b9ec8889f35aad754098b009"
+      sha256: "23aae7cf865903f47e2acfee13e57b0f80e05830a7cb8f6929a781703be0e43a"
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.0"
+    version: "3.4.12"
   serverpod_serialization:
     dependency: transitive
     description:
       name: serverpod_serialization
-      sha256: "4f8881a527df8b931b5093bd31aeb0d1d13d1a0a72a3f0ccc0b24ebc77ada1fa"
+      sha256: "80d6bb6e4c8a01bc25b30fbbebc1991fd4c1ce301164599030942c39eee6a95b"
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.0"
+    version: "3.4.12"
   shared_preferences:
     dependency: transitive
     description:
@@ -884,14 +884,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.1"
-  sprintf:
-    dependency: transitive
-    description:
-      name: sprintf
-      sha256: "1fc9ffe69d4df602376b52949af107d8f5703b77cda567c4d7d86a0693120f23"
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.0.0"
   sqflite:
     dependency: transitive
     description:
@@ -1064,10 +1056,10 @@ packages:
     dependency: "direct main"
     description:
       name: uuid
-      sha256: a5be9ef6618a7ac1e964353ef476418026db906c4facdedaa299b7a2e71690ff
+      sha256: "9b129329f58692f6e6578329498a8fe9fbe98f090beb764ffbb8ee2eadd01dcd"
       url: "https://pub.dev"
     source: hosted
-    version: "4.5.1"
+    version: "4.6.0"
   vector_math:
     dependency: transitive
     description:
@@ -1182,4 +1174,4 @@ packages:
     version: "3.1.3"
 sdks:
   dart: ">=3.11.0-0 <4.0.0"
-  flutter: ">=3.27.4"
+  flutter: ">=3.32.0"

@@ -1,9 +1,9 @@
 // admin_dashboard_screen.dart
 import 'package:connect_share_client/connect_share_client.dart';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart'; 
-import '../../../core/widgets/ui_helpers.dart'; 
-import '../../../src/serverpod_client.dart'; 
+import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/ui_helpers.dart';
+import '../../../src/serverpod_client.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});

@@ -1,4 +1,3 @@
-
 import 'package:geolocator/geolocator.dart';
 import '../../../core/models/geo_point.dart';
 
@@ -30,7 +29,7 @@ class LocationService {
       Position position = await Geolocator.getCurrentPosition(
         locationSettings: LocationSettings(
           accuracy: LocationAccuracy.high,
-          distanceFilter: 10, 
+          distanceFilter: 10,
         ),
       );
       return GeoPoint(
@@ -42,5 +41,3 @@ class LocationService {
     }
   }
 }
-
-

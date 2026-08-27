@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:serverpod_auth_client/module.dart';
 
-
 import '../../../src/serverpod_client.dart';
 
 class AuthState extends ChangeNotifier {
@@ -11,7 +10,7 @@ class AuthState extends ChangeNotifier {
 
   UserInfo? get userInfo => _userInfo;
   bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage; 
+  String? get errorMessage => _errorMessage;
   AuthState() {
     _loadCurrentUser();
   }
@@ -23,7 +22,7 @@ class AuthState extends ChangeNotifier {
 
   Future<void> _loadCurrentUser() async {
     try {
-      final currentUser =  sessionManager.signedInUser;
+      final currentUser = sessionManager.signedInUser;
       setUserInfo(currentUser);
     } catch (e) {
       _errorMessage = 'Failed to connect to server: $e';

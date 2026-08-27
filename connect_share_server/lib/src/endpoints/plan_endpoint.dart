@@ -1,9 +1,10 @@
 import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_auth_server/serverpod_auth_server.dart';
 import '../generated/protocol.dart';
 
 class PlanEndpoint extends Endpoint {
   Future<List<Plan>> listPlansForHotspot(Session session, int hotspotId) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }
@@ -32,7 +33,7 @@ class PlanEndpoint extends Endpoint {
     double? bandwidthUpMbps,
     bool isActive,
   ) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }
@@ -62,7 +63,7 @@ class PlanEndpoint extends Endpoint {
   }
 
   Future<bool> updatePlan(Session session, Plan plan) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }
@@ -84,7 +85,7 @@ class PlanEndpoint extends Endpoint {
   }
 
   Future<bool> deletePlan(Session session, int planId) async {
-    final userInfo = await session.authenticated;
+    final userInfo = session.authenticated;
     if (userInfo == null) {
       throw AuthenticationException(message: 'User not authenticated');
     }

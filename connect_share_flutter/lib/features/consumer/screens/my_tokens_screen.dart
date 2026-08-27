@@ -3,9 +3,9 @@ import 'package:connect_share_client/connect_share_client.dart'; // Assuming you
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/theme/app_colors.dart'; 
-import '../../../core/widgets/ui_helpers.dart'; 
-import '../../../src/serverpod_client.dart'; 
+import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/ui_helpers.dart';
+import '../../../src/serverpod_client.dart';
 
 class MyTokensScreen extends StatefulWidget {
   const MyTokensScreen({super.key});

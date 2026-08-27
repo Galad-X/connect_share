@@ -737,23 +737,34 @@ class Endpoints extends _i1.EndpointDispatch {
           name: 'initializePayment',
           params: {
             'paystackReference': _i1.ParameterDescription(
-              name: 'paystackReference', type: _i1.getType<String>(), nullable: false,
+              name: 'paystackReference',
+              type: _i1.getType<String>(),
+              nullable: false,
             ),
             'email': _i1.ParameterDescription(
-              name: 'email', type: _i1.getType<String>(), nullable: false,
+              name: 'email',
+              type: _i1.getType<String>(),
+              nullable: false,
             ),
             'hotspotId': _i1.ParameterDescription(
-              name: 'hotspotId', type: _i1.getType<int>(), nullable: false,
+              name: 'hotspotId',
+              type: _i1.getType<int>(),
+              nullable: false,
             ),
             'planId': _i1.ParameterDescription(
-              name: 'planId', type: _i1.getType<int>(), nullable: false,
+              name: 'planId',
+              type: _i1.getType<int>(),
+              nullable: false,
             ),
           },
           call: (_i1.Session session, Map<String, dynamic> params) async =>
               (endpoints['transaction'] as _i7.TransactionEndpoint)
                   .initializePayment(
-            session, params['paystackReference'], params['email'],
-            params['hotspotId'], params['planId'],
+            session,
+            params['paystackReference'],
+            params['email'],
+            params['hotspotId'],
+            params['planId'],
           ),
         ),
         'verifyPaymentAndGenerateToken': _i1.MethodConnector(

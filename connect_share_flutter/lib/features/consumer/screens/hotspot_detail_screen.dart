@@ -3,10 +3,10 @@
 import 'package:connect_share_client/connect_share_client.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart'; 
-import '../../../core/widgets/ui_helpers.dart'; 
+import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/ui_helpers.dart';
 import '../../../src/serverpod_client.dart';
-import '../../payment/screens/payment_screen.dart'; 
+import '../../payment/screens/payment_screen.dart';
 
 class HotspotDetailScreen extends StatefulWidget {
   final HotspotConfig hotspot;
@@ -161,8 +161,7 @@ class _HotspotDetailScreenState extends State<HotspotDetailScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: GlassmorphicCard(
-        backgroundColor: AppColors.glassBackgroundColor
-            .withAlpha(52), 
+        backgroundColor: AppColors.glassBackgroundColor.withAlpha(52),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

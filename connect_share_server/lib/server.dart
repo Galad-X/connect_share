@@ -15,8 +15,8 @@ Future<void> _sendTransactionalEmail(
   required String subject,
   required String html,
 }) async {
-  final apiKey = Serverpod.instance.passwords['resendApiKey'];
-  final from = Serverpod.instance.passwords['emailFrom'];
+  final apiKey = Serverpod.instance.getPassword('resendApiKey');
+  final from = Serverpod.instance.getPassword('emailFrom');
   if (apiKey == null || apiKey.isEmpty || from == null || from.isEmpty) {
     throw Exception('Transactional email is not configured on the server.');
   }
@@ -38,7 +38,8 @@ Future<void> _sendTransactionalEmail(
     final response = await request.close();
     if (response.statusCode < 200 || response.statusCode >= 300) {
       final body = await response.transform(utf8.decoder).join();
-      session.log('Email provider rejected message: $body', level: LogLevel.error);
+      session.log('Email provider rejected message: $body',
+          level: LogLevel.error);
       throw Exception('Email provider rejected the message.');
     }
   } finally {
@@ -53,8 +54,6 @@ Future<void> _sendTransactionalEmail(
 void run(List<String> args) async {
   // Initialize Serverpod and connect it with your generated code.
 
- 
-
   final pod = Serverpod(
     args,
     Protocol(),
@@ -67,10 +66,10 @@ void run(List<String> args) async {
   pod.webServer.addRoute(RouteRoot(), '/index.html');
   // Serve all files in the /static directory.
   pod.webServer.addRoute(
-    RouteStaticDirectory(serverDirectory: 'static', basePath: '/'),
+    StaticRoute.directory(Directory('static')),
     '/*',
   );
-  
+
   auth.AuthConfig.set(auth.AuthConfig(
     sendValidationEmail: (session, email, validationCode) async {
       await _sendTransactionalEmail(

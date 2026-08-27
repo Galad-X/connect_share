@@ -153,8 +153,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               style: TextStyle(color: AppColors.textColor),
               decoration: InputDecoration(
                 hintText: 'Search by name or email...',
-                hintStyle:
-                    TextStyle(color: AppColors.hintColor.withAlpha(177)),
+                hintStyle: TextStyle(color: AppColors.hintColor.withAlpha(177)),
                 prefixIcon:
                     Icon(Icons.search_rounded, color: AppColors.hintColor),
                 border: InputBorder.none,
@@ -258,7 +257,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               style: TextStyle(
                   color: AppColors.textColor, fontWeight: FontWeight.w500)),
           subtitle: Text(
-              '${user.displayName } • Role: ${user.role.capitalizeFirst()}',
+              '${user.displayName} • Role: ${user.role.capitalizeFirst()}',
               style: TextStyle(color: AppColors.hintColor, fontSize: 12)),
           onTap: () => _showUserDetailsDialog(user), // Open details dialog
           trailing: PopupMenuButton<String>(

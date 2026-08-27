@@ -56,10 +56,8 @@ class CaptivePortalService {
           if (clientMac == null || clientMac.isEmpty) {
             return shelf.Response(
               400,
-              body: jsonEncode({
-                'success': false,
-                'message': 'Device identifier required'
-              }),
+              body: jsonEncode(
+                  {'success': false, 'message': 'Device identifier required'}),
               headers: {'content-type': 'application/json'},
             );
           }

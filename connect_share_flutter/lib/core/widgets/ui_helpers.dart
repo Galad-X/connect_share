@@ -188,9 +188,8 @@ Widget buildErrorWidget(BuildContext context, String? errorMessage,
 }
 
 // Helper for modern AppBar (transparent with optional title)
-AppBar buildModernAppBar(BuildContext context, String title, 
-    {List<Widget>? actions, bool showBackButton = true, Widget? leading
-}) {
+AppBar buildModernAppBar(BuildContext context, String title,
+    {List<Widget>? actions, bool showBackButton = true, Widget? leading}) {
   return AppBar(
     backgroundColor: Colors.transparent,
     elevation: 0,
@@ -202,7 +201,7 @@ AppBar buildModernAppBar(BuildContext context, String title,
                 FontWeight.w600)), // White text for glassmorphic context
     centerTitle: true,
     iconTheme: IconThemeData(color: AppColors.textColor), // Back button color
-    leading:  showBackButton && Navigator.canPop(context)
+    leading: showBackButton && Navigator.canPop(context)
         ? IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded),
             onPressed: () => Navigator.pop(context),
@@ -211,6 +210,7 @@ AppBar buildModernAppBar(BuildContext context, String title,
     actions: actions,
   );
 }
+
 extension StringExtension on String {
   // For FeedbackStatus and FeedbackType
   String capitalizeFirst() {

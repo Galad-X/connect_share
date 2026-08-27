@@ -106,7 +106,7 @@ class _ConsumerMainNavigationState extends State<ConsumerMainNavigation> {
         if (didPop) return;
 
         final NavigatorState? currentNavigator =
-          _navigatorKeys[_selectedIndex].currentState;
+            _navigatorKeys[_selectedIndex].currentState;
 
         if (currentNavigator != null && currentNavigator.canPop()) {
           currentNavigator.pop();
@@ -115,7 +115,7 @@ class _ConsumerMainNavigationState extends State<ConsumerMainNavigation> {
 
         if (_selectedIndex != 0) {
           setState(() {
-        _selectedIndex = 0;
+            _selectedIndex = 0;
           });
           return;
         }
@@ -123,25 +123,25 @@ class _ConsumerMainNavigationState extends State<ConsumerMainNavigation> {
         await Navigator.of(context).maybePop();
       },
       child: Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: List.generate(
-        _tabs.length,
-        (index) => _buildTabNavigator(index),
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: List.generate(
+            _tabs.length,
+            (index) => _buildTabNavigator(index),
+          ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
-        onTap: _onTabTapped,
-        items: _tabs
-          .map((tab) => BottomNavigationBarItem(
-            icon: Icon(tab.icon),
-            activeIcon: Icon(tab.activeIcon),
-            label: tab.label,
-            ))
-          .toList(),
-      ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _selectedIndex,
+          onTap: _onTabTapped,
+          items: _tabs
+              .map((tab) => BottomNavigationBarItem(
+                    icon: Icon(tab.icon),
+                    activeIcon: Icon(tab.activeIcon),
+                    label: tab.label,
+                  ))
+              .toList(),
+        ),
       ),
     );
   }

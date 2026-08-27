@@ -237,10 +237,8 @@ class _ComplaintsAndSuggestionsScreenState
         child: Row(
           children: [
             _buildFilterChip(null, "All Feedback"),
-            ...FeedbackStatus.values
-                .map((status) =>
-                    _buildFilterChip(status, status.name.capitalizeFirst()))
-                ,
+            ...FeedbackStatus.values.map((status) =>
+                _buildFilterChip(status, status.name.capitalizeFirst())),
           ],
         ),
       ),

@@ -3,11 +3,12 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_auth_server/serverpod_auth_server.dart';
 import '../generated/protocol.dart'; // Access to TransactionLog, UserProfile, HotspotConfig, Plan, AccessToken
 
 class TransactionEndpoint extends Endpoint {
   Future<void> _ensureAdmin(Session session) async {
-    final user = await session.authenticated;
+    final user = session.authenticated;
     if (user == null) {
       throw AuthenticationException(message: 'User not authenticated.');
     }
@@ -25,17 +26,21 @@ class TransactionEndpoint extends Endpoint {
     int hotspotId,
     int planId,
   ) async {
-    final authenticated = await session.authenticated;
+    final authenticated = session.authenticated;
     if (authenticated == null) {
       throw AuthenticationException(message: 'User not authenticated.');
     }
     final plan = await Plan.db.findById(session, planId);
     final hotspot = await HotspotConfig.db.findById(session, hotspotId);
-    if (plan == null || !plan.isActive || hotspot == null || !hotspot.isActive ||
-        plan.hotspotId != hotspotId || email.trim().isEmpty) {
+    if (plan == null ||
+        !plan.isActive ||
+        hotspot == null ||
+        !hotspot.isActive ||
+        plan.hotspotId != hotspotId ||
+        email.trim().isEmpty) {
       throw ArgumentException(message: 'Invalid payment details.');
     }
-    final secretKey = Serverpod.instance.passwords['paystackSecretKey'];
+    final secretKey = session.passwords['paystackSecretKey'];
     if (secretKey == null || secretKey.isEmpty) {
       throw Exception('Paystack is not configured on the server.');
     }
@@ -60,8 +65,10 @@ class TransactionEndpoint extends Endpoint {
       final data = payload is Map<String, dynamic>
           ? payload['data'] as Map<String, dynamic>?
           : null;
-      if (response.statusCode < 200 || response.statusCode >= 300 ||
-          payload['status'] != true || data == null) {
+      if (response.statusCode < 200 ||
+          response.statusCode >= 300 ||
+          payload['status'] != true ||
+          data == null) {
         throw ArgumentException(message: 'Unable to initialize payment.');
       }
       return [
@@ -82,7 +89,7 @@ class TransactionEndpoint extends Endpoint {
     int hotspotId,
     int planId,
   ) async {
-    final authenticated = await session.authenticated;
+    final authenticated = session.authenticated;
     if (authenticated == null) {
       throw AuthenticationException(message: 'User not authenticated.');
     }
@@ -92,12 +99,15 @@ class TransactionEndpoint extends Endpoint {
 
     final plan = await Plan.db.findById(session, planId);
     final hotspot = await HotspotConfig.db.findById(session, hotspotId);
-    if (plan == null || !plan.isActive || hotspot == null || !hotspot.isActive ||
+    if (plan == null ||
+        !plan.isActive ||
+        hotspot == null ||
+        !hotspot.isActive ||
         plan.hotspotId != hotspotId) {
       throw ArgumentException(message: 'Plan or hotspot is unavailable.');
     }
 
-    final secretKey = Serverpod.instance.passwords['paystackSecretKey'];
+    final secretKey = session.passwords['paystackSecretKey'];
     if (secretKey == null || secretKey.isEmpty) {
       throw Exception('Paystack is not configured on the server.');
     }
@@ -115,9 +125,12 @@ class TransactionEndpoint extends Endpoint {
       final paidAmount = data?['amount'];
       final paidCurrency = data?['currency']?.toString().toUpperCase();
       final paidStatus = data?['status']?.toString().toLowerCase();
-      if (response.statusCode < 200 || response.statusCode >= 300 ||
-          payload['status'] != true || paidStatus != 'success' ||
-          paidAmount is! num || paidAmount.round() != (plan.price * 100).round() ||
+      if (response.statusCode < 200 ||
+          response.statusCode >= 300 ||
+          payload['status'] != true ||
+          paidStatus != 'success' ||
+          paidAmount is! num ||
+          paidAmount.round() != (plan.price * 100).round() ||
           paidCurrency != plan.currency.toUpperCase()) {
         throw ArgumentException(message: 'Payment could not be verified.');
       }
@@ -131,11 +144,14 @@ class TransactionEndpoint extends Endpoint {
     );
     if (existing != null) {
       if (existing.consumerId != authenticated.userId ||
-          existing.hotspotId != hotspotId || existing.planId != planId) {
-        throw AuthenticationException(message: 'Payment reference is already in use.');
+          existing.hotspotId != hotspotId ||
+          existing.planId != planId) {
+        throw AuthenticationException(
+            message: 'Payment reference is already in use.');
       }
       if (existing.accessTokenId != null) {
-        final token = await AccessToken.db.findById(session, existing.accessTokenId!);
+        final token =
+            await AccessToken.db.findById(session, existing.accessTokenId!);
         if (token != null) return token;
       }
     }
@@ -143,9 +159,15 @@ class TransactionEndpoint extends Endpoint {
     final now = DateTime.now().toUtc();
     final expiryDate = switch (plan.durationType) {
       PlanDurationType.daily => now.add(Duration(days: plan.durationValue)),
-      PlanDurationType.weekly => now.add(Duration(days: 7 * plan.durationValue)),
-      PlanDurationType.monthly => DateTime.utc(now.year, now.month + plan.durationValue,
-          now.day, now.hour, now.minute, now.second),
+      PlanDurationType.weekly =>
+        now.add(Duration(days: 7 * plan.durationValue)),
+      PlanDurationType.monthly => DateTime.utc(
+          now.year,
+          now.month + plan.durationValue,
+          now.day,
+          now.hour,
+          now.minute,
+          now.second),
       PlanDurationType.custom => now.add(Duration(hours: plan.durationValue)),
     };
     return await session.db.transaction((dbTransaction) async {
@@ -165,21 +187,22 @@ class TransactionEndpoint extends Endpoint {
         transaction: dbTransaction,
       );
 
-      final transaction = existing ?? TransactionLog(
-        consumerId: authenticated.userId,
-        providerId: hotspot.providerId,
-        hotspotId: hotspotId,
-        planId: planId,
-        accessTokenId: token.id,
-        paystackReference: paystackReference,
-        amountPaid: plan.price,
-        currency: plan.currency,
-        transactionDate: now,
-        status: 'successful',
-        platformFee: plan.price * 0.05,
-        providerPayoutAmount: plan.price * 0.95,
-        payoutStatus: 'pending_payout',
-      );
+      final transaction = existing ??
+          TransactionLog(
+            consumerId: authenticated.userId,
+            providerId: hotspot.providerId,
+            hotspotId: hotspotId,
+            planId: planId,
+            accessTokenId: token.id,
+            paystackReference: paystackReference,
+            amountPaid: plan.price,
+            currency: plan.currency,
+            transactionDate: now,
+            status: 'successful',
+            platformFee: plan.price * 0.05,
+            providerPayoutAmount: plan.price * 0.95,
+            payoutStatus: 'pending_payout',
+          );
       if (existing == null) {
         await TransactionLog.db.insertRow(
           session,
@@ -210,7 +233,7 @@ class TransactionEndpoint extends Endpoint {
       String paystackReference,
       double amountPaid,
       String currency) async {
-    final authenticated = await session.authenticated;
+    final authenticated = session.authenticated;
     if (authenticated == null) {
       throw AuthenticationException(message: 'User not authenticated.');
     }
@@ -222,7 +245,8 @@ class TransactionEndpoint extends Endpoint {
       throw ArgumentException(message: 'Plan not found or is inactive.');
     }
     if (plan.hotspotId != hotspotId) {
-      throw ArgumentException(message: 'Plan does not belong to the specified hotspot.');
+      throw ArgumentException(
+          message: 'Plan does not belong to the specified hotspot.');
     }
 
     final hotspot = await HotspotConfig.db.findById(session, hotspotId);
@@ -232,8 +256,9 @@ class TransactionEndpoint extends Endpoint {
 
     // Validate input
     if (paystackReference.isEmpty || amountPaid <= 0 || currency.isEmpty) {
-      throw ArgumentException(message: 
-          'Invalid transaction details (Paystack reference, amount, or currency).');
+      throw ArgumentException(
+          message:
+              'Invalid transaction details (Paystack reference, amount, or currency).');
     }
 
     // Check for duplicate Paystack reference
@@ -319,7 +344,7 @@ class TransactionEndpoint extends Endpoint {
   // List transactions for the authenticated consumer
   Future<List<TransactionLog>> listConsumerTransactions(Session session,
       {int? limit = 50}) async {
-    final authenticated = await session.authenticated;
+    final authenticated = session.authenticated;
     if (authenticated == null) {
       throw AuthenticationException(message: 'User not authenticated.');
     }
@@ -337,7 +362,7 @@ class TransactionEndpoint extends Endpoint {
   // List transactions for the authenticated provider
   Future<List<TransactionLog>> listProviderTransactions(Session session,
       {int? limit = 50}) async {
-    final authenticated = await session.authenticated;
+    final authenticated = session.authenticated;
     if (authenticated == null) {
       throw AuthenticationException(message: 'User not authenticated.');
     }

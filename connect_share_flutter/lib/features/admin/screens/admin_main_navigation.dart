@@ -79,9 +79,9 @@ class _AdminMainNavigationState extends State<AdminMainNavigation> {
       ),
     );
     if (confirm == true) {
-      await sessionManager.signOutDevice(); 
-     
-        if (!mounted) return;
+      await sessionManager.signOutDevice();
+
+      if (!mounted) return;
       Navigator.of(context, rootNavigator: true)
           .pushNamedAndRemoveUntil('/signin', (Route<dynamic> route) => false);
     }
@@ -132,10 +132,9 @@ class _AdminMainNavigationState extends State<AdminMainNavigation> {
       extendBodyBehindAppBar: true, // Important for glassmorphic AppBar
       extendBody:
           true, // Allows body content behind a potentially transparent drawer overlay
-      appBar: buildModernAppBar(
-          context, _screenTitles[_selectedIndex], 
+      appBar: buildModernAppBar(context, _screenTitles[_selectedIndex],
           // Use a custom leading to open the drawer, as the default one might not play well with glassmorphism
-          showBackButton: false, 
+          showBackButton: false,
           leading: IconButton(
             icon: Icon(Icons.menu_rounded,
                 color: AppColors.textColor.withAlpha(229)),
@@ -176,7 +175,7 @@ class _AdminMainNavigationState extends State<AdminMainNavigation> {
                         Icons.receipt_long_rounded), // Reordered
                     _buildDrawerItem(7, 'Payouts',
                         Icons.account_balance_wallet_rounded), // Reordered
-                     Divider(
+                    Divider(
                         color: AppColors.glassBorderColor,
                         indent: 16,
                         endIndent: 16),
@@ -185,7 +184,7 @@ class _AdminMainNavigationState extends State<AdminMainNavigation> {
                     _buildDrawerItem(
                         4, 'Terms & Policies', Icons.description_rounded),
                     _buildDrawerItem(5, 'Feedback', Icons.feedback_rounded),
-                     Divider(
+                    Divider(
                         color: AppColors.glassBorderColor,
                         indent: 16,
                         endIndent: 16),

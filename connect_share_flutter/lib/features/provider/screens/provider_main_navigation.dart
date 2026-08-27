@@ -5,7 +5,6 @@ import '../../shared/screens/profile_screen.dart';
 import 'earnings_screen.dart';
 import 'provider_dashboard_screen.dart';
 
-
 class ProviderMainNavigation extends StatefulWidget {
   const ProviderMainNavigation({super.key});
 
@@ -20,7 +19,6 @@ class _ProviderMainNavigationState extends State<ProviderMainNavigation> {
     ProviderDashboardScreen(), // Tab 1: My Hotspots
     EarningsScreen(), // Tab 2: Earnings
     ProfileScreen(), // Tab 3: Profile
-   
   ];
 
   void _onItemTapped(int index) {
